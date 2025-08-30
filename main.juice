@@ -1,0 +1,15 @@
+(live assigns
+    (ui:tabs (@)
+        (ui:tab (@ (#name "foo"))
+            (ui:list (@)
+                (for x (get data #items) (ui:item (@ (#label (get x #label)))))
+            )
+            (ui:text (@ (#id "mytext") (#content (get assigns #message))))
+            (handler #click some-function (ui:button (@ (content "Click me"))))
+        )
+        #hello
+        (ui:tab (@ (#name "bar"))
+            (ui:text (@ (#content "...")))
+        )
+    )
+)

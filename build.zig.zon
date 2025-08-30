@@ -1,0 +1,13 @@
+.{
+    .name = .juice,
+    .version = "0.1.0",
+    .fingerprint = 0x7d4f9543783cb285, // Changing this has security and trust implications.
+    .minimum_zig_version = "0.14.1",
+    .dependencies = .{
+    },
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+    },
+}

@@ -1,0 +1,91 @@
+# juice - application development framework
+
+## Core language features
+
+### Special forms
+
+`if` - control flow
+`let` - defines, shadows, or reassignes variable in current scope
+`do` - blocks for lexical scope
+`lambda` - anonymous functions
+`def` - named functions; same as `(let my-function (lambda (n) ...))`
+`import` - would be cool later on
+`for` - basically the elixir for, maps over items
+`dict` - constructs associative lists (aka dictionaries/maps/objects/key-values)
+`set` - constructs a set data structure
+
+### Standard library
+
+`inspect` - prints a code-representation of the data
+`print` - prints a humanly readable version of the data
+`not` - makes truthy expressions falsy
+`and`, `or`, `nor`, `xor` - binary operators
+`==`, `!=`, `>`, `>=`, `<`, `<=` - comparison operators
+`+`, `-`, `*`, `/`, `^` - mathmatical operators
+`str:upcase`, `str:downcase`, `str:capitalize`, `str:trim`
+`dict:set` - sets a value in a dict, returns new dict
+`dict:get` - gets a value from a dict
+`set:add` - adds a value to a set, returns new set
+`set:del` - removes a value from a set, returns new set
+`set:has` - checks if value is in set
+`len` - returns length of string (counts graphemes) or list (counts items)
+`concat` - concatenates strings or lists
+`tie` - creates a new list of the given elements
+`head` - returns the first grapheme of a string or first item of the list
+`tail` - returns everything but the first item/grapheme
+`nth` - returns the nth item of a string or list
+`reverse` - reverses a string or list
+`ls:join` - joins a list with the given separator
+`ls:flatten` - flattens nested lists
+`ls:push` - adds an item to the start of a list
+`ls:pop` - removes an item from the end of a list
+
+## App/UI-specific builtins
+
+`@` (formely `attrs`) - keys do not get evaluated at call site
+`live` - for managing state and handlers
+`handler` - for attaching handlers
+
+```lisp
+(def some-function (event assigns) (do
+    (set assigns #message "hewwo world!")
+))
+
+(live assigns
+    (ui:tabs (@)
+        (ui:tab (@ (#name "foo"))
+            (ui:list (@)
+                (for x (get data #items) (ui:item (@ (#label (get x #label)))))
+            )
+            (ui:text (@ (#id "mytext") (#content (get assigns #message))))
+            (handler #click some-function (ui:button (@ (content "Click me"))))
+        )
+        # hello
+        (ui:tab (@ (#name "bar"))
+            (ui:text (@ (#content "...")))
+        )
+    )
+)
+```
+
+Psuedo-code explaining function signatures:
+
+```
+nodes: [node | [nodes]]
+node: (NAME (@ attr**) nodes**)
+attr: (PROPERTY VALUE)
+live: (live BINDING nodes**)
+handler: (handler EVENT CALLBACK nodes**)
+```
+
+live is a macro. the first arg is the name that binds the assigns
+the second is the ui structure to be rerendered
+
+live returns a ui structure that handles rerendering
+live is passed to the ui lib
+
+the ui lib renders all children in the rest arguments
+if it encounters a handler, it makes sure to send a message to
+the live structure, which then evals the given callback given
+the current assigns and rerenders the structure with the assigns
+returned from the callback.
