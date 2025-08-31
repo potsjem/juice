@@ -36,7 +36,7 @@ pub const Ast = struct {
             std.debug.print("  ", .{});
 
         switch (kind) {
-            .eof => {
+            .root => {
                 std.debug.print("root\n", .{});
 
                 const len = self.extra[node.list];
@@ -63,7 +63,7 @@ pub const Node = struct {
     main: u32,
     list: u32,
 
-    fn kind(self: Node, tokens: []const Token) Token.Kind {
+    pub fn kind(self: Node, tokens: []const Token) Token.Kind {
         return tokens[self.main].kind;
     }
 };
@@ -80,7 +80,7 @@ pub fn parse(allocator: Allocator, tokens: []const Token, source: [:0]const u8) 
     });
 
     while (true) switch (peek(tokens, &idx).kind) {
-        .eof => break,
+        .root => break,
         else => {
             const root = try parseExpr(
                 &nodes,
@@ -119,7 +119,7 @@ fn parseExpr(
     const token = next(tokens, idx);
 
     return switch (token.kind) {
-        .eof => {
+        .root => {
             error_idx = token.idx;
             return error.UnexpectedEof;
         },
@@ -190,7 +190,7 @@ fn next(tokens: []const Token, idx: *u32) Token {
 
 fn skip(tokens: []const Token, idx: *u32) void {
     switch (tokens[idx.*].kind) {
-        .eof => {},
+        .root => {},
         else => idx.* += 1,
     }
 }

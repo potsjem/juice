@@ -2,6 +2,7 @@ const std = @import("std");
 
 const Lexer = @import("lexer.zig");
 const Parser = @import("parser.zig");
+const Interp = @import("interp.zig");
 
 const cwd = std.fs.cwd;
 const DebugAllocator = std.heap.DebugAllocator;
@@ -28,8 +29,10 @@ pub fn main() !void {
     for (tokens) |token|
         std.debug.print("token.{s}: '{s}'\n", .{@tagName(token.kind), token.slice(source)});
 
-    const ast = try Parser.parse(allocator, tokens, source);
-    defer ast.deinit(allocator);
+    const tree = try Parser.parse(allocator, tokens, source);
+    defer tree.deinit(allocator);
 
-    try ast.debug(tokens, source, 0, 0);
+    try tree.debug(tokens, source, 0, 0);
+
+    //try Interp.eval(tree, tokens, source);
 }

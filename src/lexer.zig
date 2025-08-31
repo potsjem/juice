@@ -21,7 +21,7 @@ pub const Token = struct {
     idx: u32,
 
     pub const Kind = enum {
-        eof,
+        root, //EOF
         atom,
         identifier,
         string,
@@ -34,7 +34,7 @@ pub const Token = struct {
         var idx = self.idx;
 
         return switch (self.kind) {
-            .eof => source[idx..],
+            .root => source[idx..],
             .atom => sub: switch (source[idx+1]) {
                 'a'...'z', 'A'...'Z', '0'...'9', ':', '-' => {
                     idx += 1;
@@ -84,7 +84,7 @@ pub fn lex(allocator: Allocator, source: [:0]const u8) Error![]Token {
             },
             0 => {
                 try tokens.append(.{
-                    .kind = .eof,
+                    .kind = .root,
                     .idx = idx,
                 });
 
